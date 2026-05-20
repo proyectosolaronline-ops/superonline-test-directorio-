@@ -891,6 +891,55 @@ function closePopup(){document.getElementById('popup-bg').classList.remove('open
 /* ══════════════════════════════════════════════════════
    POPUP TIENDA EXTERNA — botones dinámicos según datos
    ══════════════════════════════════════════════════════ */
+
+function openExtPopup(s){
+  const cfg = s.config || {};
+  const nombre = s.nombre_tienda || s.name || 'Tienda';
+  const tipo = cfg.tipoNegocio || cfg.businessType || cfg.tipo || 'Tienda externa';
+  const lat = parseFloat(cfg.locationLat);
+  const lng = parseFloat(cfg.locationLng);
+  const dist = (userLat && !isNaN(lat)) ? haversineKm(userLat,userLng,lat,lng).toFixed(1)+' km' : '';
+  const fotoUrl = fixImgUrl(cfg.foto||cfg.photo||cfg.fotoUrl||cfg.image||cfg.logo||cfg.logoUrl||'');
+  const tel = String(s.telefono||cfg.telefono||'').replace(/\D/g,'');
+  const showWpp = String(cfg.whatsapp||'').toUpperCase() === 'TRUE';
+  const showLlegar = String(cfg.llegar||'').toUpperCase() === 'TRUE';
+  const extLink = cfg.linkNegocio||cfg.link_negocio||cfg.link||cfg.url||s.link_negocio||'';
+
+  // Foto o placeholder
+  const fotoWrap = document.getElementById('ext-foto-wrap');
+  const fotoHtml = fotoUrl
+    ? `<img class="ext-foto" src="${fotoUrl}" onerror="this.style.display='none'">`
+    : `<div class="ext-foto-ph">🏪</div>`;
+  fotoWrap.innerHTML = fotoHtml + fotoWrap.innerHTML.replace(/<img class="ext-foto"[^>]*>|<div class="ext-foto-ph">[^<]*<\/div>/,'');
+
+  // Datos
+  document.getElementById('ext-nombre').textContent = nombre;
+  document.getElementById('ext-tipo').textContent = tipo;
+  document.getElementById('ext-ubicacion').innerHTML =
+    `📍 ${[cfg.colonia, cfg.localidad||cfg.city].filter(Boolean).join(', ')||'Querétaro'}${dist?' · '+dist:''}`;
+
+  // Botones dinámicos
+  let btns = '<div class="ext-actions">';
+  if(showLlegar && !isNaN(lat) && !isNaN(lng)){
+    btns += `<a class="ext-btn ext-btn-llegar" href="https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}" target="_blank">
+      <span class="ext-btn-icon">🗺️</span>Cómo llegar</a>`;
+  }
+  if(showWpp && tel){
+    const msg = encodeURIComponent('¡Hola! Vi tu negocio en el directorio y quiero más información 🛍️');
+    btns += `<a class="ext-btn ext-btn-wpp" href="https://wa.me/52${tel}?text=${msg}" target="_blank">
+      <span class="ext-btn-icon">💬</span>WhatsApp</a>`;
+  }
+  btns += '</div>';
+  if(extLink){
+    btns += `<a class="ext-btn-link" href="${extLink}" target="_blank">🔗 Visitar tienda completa</a>`;
+  }
+
+  document.getElementById('ext-actions-wrap').innerHTML = btns;
+
+  // Abrir popup
+  document.getElementById('ext-popup-bg').classList.add('open');
+}
+ 
 function closeExtPopup(){  document.getElementById('ext-popup-bg').classList.remove('open');
 }
 
