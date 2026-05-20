@@ -1596,7 +1596,7 @@ if(promos.length>0){
     }, idx));
   });
 }
-});}
+});
   else if(cfg.promoTitle||cfg.promoImage){ng.appendChild(buildCsProdCard({img:fixImgUrl(cfg.promoImage||''),name:cfg.promoTitle||store.name,desc:cfg.promoDesc||cfg.description||'',price:'0',badge:'🔥 Promo',storeId:store.storeId},0));}
 
   const dc=document.createElement('div');dc.className='cs-prod';dc.style.cursor='default';dc.innerHTML=`<div class="cs-prod-img-ph">🏪</div><div class="cs-prod-body"><div class="cs-prod-name" style="font-size:12px;-webkit-line-clamp:4;">${cfg.description||'Visita nuestra tienda.'}</div></div>`;ng.appendChild(dc);
