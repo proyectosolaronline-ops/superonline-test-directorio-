@@ -554,7 +554,6 @@ body.fs-mode .fab-group{bottom:18px;right:12px;}
 .pp-price{font-size:22px;font-weight:800;color:var(--primary);margin-bottom:16px;}
 
 .pp-actions{display:flex;gap:10px;}
-
 .pp-btn-visit{flex:1;padding:13px;background:var(--primary);color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;}
 
 .pp-btn-more{padding:13px;background:#f1f3f6;color:#333;border:none;border-radius:12px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;}
@@ -921,40 +920,21 @@ body.fs-mode .fab-group{bottom:18px;right:12px;}
 
   </div>
 
-</div>
-
-<div id="prod-popup-bg" onclick="if(event.target===this)closeProdPopup()">
-
+</div><div id="prod-popup-bg" onclick="if(event.target===this)closeProdPopup()">
   <div id="prod-popup" style="position:relative;">
-
     <button class="pp-close" onclick="closeProdPopup()">✕</button>
-
     <div id="pp-img-wrap"></div>
-
     <div class="pp-body">
-
       <div class="pp-badge" id="pp-badge">🔥 Promo</div>
-
       <div class="pp-name" id="pp-name"></div>
-
       <div class="pp-store" id="pp-store"></div>
-
-      <div class="pp-price" id="pp-price" style="display:none;"></div>
-
+      <div class="pp-price" id="pp-price">$0.00</div>
       <div class="pp-desc" id="pp-desc"></div>
-
       <div class="pp-actions">
-
-        <button class="pp-btn-visit" id="pp-btn-visit">Ver tienda →</button>
-
-        <button class="pp-btn-more" id="pp-btn-more" onclick="showMoreFromStore()">Ver más</button>
-
+        <button class="pp-btn-visit" id="pp-btn-visit" style="width:100%;">Ver tienda →</button>
       </div>
-
     </div>
-
   </div>
-
 </div>
 
 <div class="qr-modal" id="qr-modal">
