@@ -140,7 +140,6 @@ body{font-family:'Inter',sans-serif;background:#000;color:#fff;height:100dvh;ove
 .header-title{font-size:13px;font-weight:700;line-height:1.3;}
 .header-sub{font-size:10px;opacity:.7;margin-top:1px;}
 #promo-ticker{overflow:hidden;height:0;transition:height .35s cubic-bezier(.4,0,.2,1);background:linear-gradient(135deg,var(--primary),var(--primary-dark));position:absolute;bottom:0;left:0;right:0;z-index:1100;border-radius:12px 12px 0 0;}
-#promo-ticker.has-promos{height:70px;}#promo-ticker.has-promos{height:70px;}
 
   #promo-ticker.has-promos{height:70px;}
 .pticker-track{display:flex;flex-direction:column;transition:transform .5s cubic-bezier(.4,0,.2,1);}
@@ -304,13 +303,6 @@ body.fs-mode .fab-group{bottom:18px;right:12px;}
 }
 .pin-label::before{
   display:none!important;
-}
-.fab-contacto {
-  animation: pulse-contacto 2s infinite;
-}
-@keyframes pulse-contacto {
-  0%, 100% { box-shadow: 0 5px 18px rgba(37,211,102,.4); }
-  50% { box-shadow: 0 5px 30px rgba(37,211,102,.8), 0 0 20px rgba(37,211,102,.4); }
 }
 .fab-contacto {
   animation: pulse-contacto 2s infinite;
@@ -699,26 +691,8 @@ promotorControl.addTo(map);
 }
 
 function addMarkersToMap(stores){
-    // Evitar pines encimados
-  var usadas = {};
-  function evitarEncime(lat, lng) {
-    var clave = lat.toFixed(4) + ',' + lng.toFixed(4);
-    if (!usadas[clave]) { usadas[clave] = 0; return [lat, lng]; }
-    usadas[clave]++;
-    var offset = 0.0003 * usadas[clave];
-    return [lat + offset, lng + offset];
-  }
-
+  
   stores.forEach(s=>{
-    const cfg=s.config||{};
-    var coords = evitarEncime(parseFloat(cfg.locationLat), parseFloat(cfg.locationLng));
-    var lat = coords[0];
-    var lng = coords[1];
-    if(isNaN(lat)||isNaN(lng))return;
-        if(isNaN(lat)||isNaN(lng))return;
-    var clave=lat.toFixed(4)+','+lng.toFixed(4);if(!window._pinOffset)window._pinOffset={};if(!window._pinOffset[clave])window._pinOffset[clave]=0;else{window._pinOffset[clave]++;lat+=0.0003*window._pinOffset[clave];lng+=0.0003*window._pinOffset[clave];}
-
-   
     const cfg=s.config||{},lat=parseFloat(cfg.locationLat),lng=parseFloat(cfg.locationLng);
     if(isNaN(lat)||isNaN(lng))return;
     
@@ -1247,7 +1221,6 @@ function verificarCodigoFlyer(){
   
   cerrarLoginFlyer();
 }
-  dataPollingInterval=setInterval(refreshData,10000);
   // Guardar estadísticas cada 30 segundos
 setInterval(function(){
   if(stats.clicks>0||stats.searches>0||stats.qr>0){
