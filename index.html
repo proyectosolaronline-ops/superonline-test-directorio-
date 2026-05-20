@@ -1606,7 +1606,7 @@ if(promos.length>0){
 }
 
 function buildCsProdCard(prod,idx){const c=document.createElement('div');c.className='cs-prod';c.onclick=()=>openCsProdDetail(prod);c.innerHTML=`${prod.img?`<img class="cs-prod-img" src="${prod.img}" onerror="this.parentNode.innerHTML='<div class=cs-prod-img-ph>🛍️</div>'+this.parentNode.innerHTML.replace(this.outerHTML,'')">`:`<div class="cs-prod-img-ph">🛍️</div>`}<div class="cs-prod-body"><div class="cs-prod-badge">${prod.badge||'🔥 Promo'}</div><div class="cs-prod-name">${prod.name}</div>
-${prod.price && !isNaN(parseFloat(prod.price)) && parseFloat(prod.price) > 0 ? '<div class="cs-prod-price">$' + parseFloat(prod.price).toFixed(2) + '</div>' : '<div class="cs-prod-price" style="color:#999;font-size:10px;">Consultar</div>'}}
+${prod.price && !isNaN(parseFloat(prod.price)) && parseFloat(prod.price) > 0 ? '<div class="cs-prod-price">$' + parseFloat(prod.price).toFixed(2) + '</div>' : '<div class="cs-prod-price" style="color:#999;font-size:10px;">Consultar</div>'}
               
               
               </div>`;return c;}
