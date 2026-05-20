@@ -715,7 +715,8 @@ function addMarkersToMap(stores){
     var lat = coords[0];
     var lng = coords[1];
     if(isNaN(lat)||isNaN(lng))return;
-  
+    stores.forEach(s=>{
+
    
     const cfg=s.config||{},lat=parseFloat(cfg.locationLat),lng=parseFloat(cfg.locationLng);
     if(isNaN(lat)||isNaN(lng))return;
