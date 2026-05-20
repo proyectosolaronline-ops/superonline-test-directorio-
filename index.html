@@ -1579,15 +1579,12 @@ async function openCatalogSheet(store){
 
   const ng=document.createElement('div');ng.className='cs-grid';ng.id='cs-grid';body.appendChild(ng);
 
-  if(promos.length>0){promos.forEach((p,idx)=>ng.appendChild(buildCsProdCard({img:fixImgUrl(p.image||p.imagen||p.imageUrl||p.imgUrl||''),name:p.name||p.nombre||p.title||'Producto',desc:p.description||p.descripcion||p.descripción||'',
-                                                                              
-price:(function(){
-  var pf = p.price || p.precio || p.precio_promocion || p.Price || p.Precio || '';
-  if(pf && !isNaN(parseFloat(pf)) && parseFloat(pf) > 0) return parseFloat(pf).toFixed(2);
-  return '0';
-})(),                                                                              
-                                                                              badge:'🔥 Promo',storeId:store.storeId},idx)));}
-
+ if(promos.length>0){promos.forEach((p,idx)=>{
+  var pf = p.price || p.precio || p.precio_promocion || '0';
+  if(pf && !isNaN(parseFloat(pf)) && parseFloat(pf) > 0) pf = parseFloat(pf).toFixed(2);
+  else pf = '0';
+  ng.appendChild(buildCsProdCard({img:fixImgUrl(p.image||p.imagen||p.imageUrl||p.imgUrl||''),name:p.name||p.nombre||p.title||'Producto',desc:p.description||p.descripcion||p.descripción||'',price:pf,badge:'🔥 Promo',storeId:store.storeId},idx));
+});}
   else if(cfg.promoTitle||cfg.promoImage){ng.appendChild(buildCsProdCard({img:fixImgUrl(cfg.promoImage||''),name:cfg.promoTitle||store.name,desc:cfg.promoDesc||cfg.description||'',price:'0',badge:'🔥 Promo',storeId:store.storeId},0));}
 
   const dc=document.createElement('div');dc.className='cs-prod';dc.style.cursor='default';dc.innerHTML=`<div class="cs-prod-img-ph">🏪</div><div class="cs-prod-body"><div class="cs-prod-name" style="font-size:12px;-webkit-line-clamp:4;">${cfg.description||'Visita nuestra tienda.'}</div></div>`;ng.appendChild(dc);
