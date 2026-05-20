@@ -1099,8 +1099,7 @@ ALL_STORES=[...sl,...se].map(s=>{s.config=typeof s.config==='string'?JSON.parse(
 
           img:fixImgUrl(p.image||p.imagen||p.imageUrl||p.imgUrl||''),
 
-          price:p.price||p.precio||'',
-
+price:p.price||p.precio||p.precio_promocion||'0',
           isPromo:true,
 
           dist
@@ -1127,8 +1126,7 @@ ALL_STORES=[...sl,...se].map(s=>{s.config=typeof s.config==='string'?JSON.parse(
 
         img:fixImgUrl(cfg.promoImage||''),
 
-        price:'',
-
+price:'0',
         isPromo:true,
 
         dist
