@@ -1538,8 +1538,8 @@ function openPromoDetail(idx){
   document.getElementById('pp-store').innerHTML=`${logoHtml}${p.storeName}${p.dist?' · '+p.dist:''}`;
 
 const pe=document.getElementById('pp-price');
-var pn=parseFloat(prod.price);
-if(prod.price && !isNaN(pn) && pn>0){pe.textContent='$'+pn.toFixed(2);pe.style.display='block';pe.style.color='#16a34a';}
+var pn=parseFloat(p.price);
+if(p.price && !isNaN(pn) && pn>0){pe.textContent='$'+pn.toFixed(2);pe.style.display='block';pe.style.color='#16a34a';}
 else{pe.textContent='Precio no disponible';pe.style.display='block';pe.style.color='#999';}
   document.getElementById('pp-desc').textContent=p.desc;
 
@@ -1600,11 +1600,10 @@ function buildCsProdCard(prod,idx){const c=document.createElement('div');c.class
 ${(function(){var pn=parseFloat(prod.price);if(prod.price&&!isNaN(pn)&&pn>0)return'<div class="cs-prod-price">$'+pn.toFixed(2)+'</div>';return'<div class="cs-prod-price" style="color:#999;font-size:10px;">Consultar</div>';})()}</div>`;return c;}
 
 function openCsProdDetail(prod){currentPromoStoreId=prod.storeId;document.getElementById('pp-img-wrap').innerHTML=prod.img?`<img class="pp-img" src="${prod.img}" onerror="this.parentNode.innerHTML='<div class=pp-img-ph>🛍️</div>'">`:`<div class="pp-img-ph">🛍️</div>`;document.getElementById('pp-badge').textContent=prod.badge||'🔥 Promo';document.getElementById('pp-name').textContent=prod.name||'';document.getElementById('pp-store').innerHTML='';
-                                
-const pe=document.getElementById('pp-price');
-var pn=parseFloat(p.price);
-if(p.price && !isNaN(pn) && pn>0){pe.textContent='$'+pn.toFixed(2);pe.style.display='block';pe.style.color='#16a34a';}
-else{pe.textContent='Precio no disponible';pe.style.display='block';pe.style.color='#999';}                                
+                               const pe=document.getElementById('pp-price');
+var pn=parseFloat(prod.price);
+if(prod.price && !isNaN(pn) && pn>0){pe.textContent='$'+pn.toFixed(2);pe.style.display='block';pe.style.color='#16a34a';}
+else{pe.textContent='Precio no disponible';pe.style.display='block';pe.style.color='#999';}                            
                                 document.getElementById('pp-desc').textContent=prod.desc||'';document.getElementById('pp-btn-visit').onclick=()=>window.open(buildStoreUrl(prod.storeId),'_blank');document.getElementById('prod-popup-bg').classList.add('open');}
 
 function closeCatalogSheet(){document.getElementById('catalog-sheet-bg').classList.remove('open');}
