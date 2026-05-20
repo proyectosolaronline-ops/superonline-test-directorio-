@@ -699,8 +699,24 @@ promotorControl.addTo(map);
 }
 
 function addMarkersToMap(stores){
-  
+    // Evitar pines encimados
+  var usadas = {};
+  function evitarEncime(lat, lng) {
+    var clave = lat.toFixed(4) + ',' + lng.toFixed(4);
+    if (!usadas[clave]) { usadas[clave] = 0; return [lat, lng]; }
+    usadas[clave]++;
+    var offset = 0.0003 * usadas[clave];
+    return [lat + offset, lng + offset];
+  }
+
   stores.forEach(s=>{
+    const cfg=s.config||{};
+    var coords = evitarEncime(parseFloat(cfg.locationLat), parseFloat(cfg.locationLng));
+    var lat = coords[0];
+    var lng = coords[1];
+    if(isNaN(lat)||isNaN(lng))return;
+  
+   
     const cfg=s.config||{},lat=parseFloat(cfg.locationLat),lng=parseFloat(cfg.locationLng);
     if(isNaN(lat)||isNaN(lng))return;
     
