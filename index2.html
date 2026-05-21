@@ -1193,7 +1193,7 @@ async function fetchStorePromos(storeId){
 
   if(catalogCache[storeId])return catalogCache[storeId];
 
-  try{const r=await fetch(BACKEND+'?action=stores.catalog&store='+encodeURIComponent(storeId));const d=await r.json();const all=d.products||d.items||(Array.isArray(d)?d:[]);const promos=all.filter(p=>{const cat=(p.category||p.categoria||p.categoría||'').toLowerCase();return cat.includes('promo');});catalogCache[storeId]=promos;return promos;}
+  try{const r=await fetch(BACKEND_MAESTRO + '?action=stores.catalog&store=' + encodeURIComponent(storeId))const d=await r.json();const all=d.products||d.items||(Array.isArray(d)?d:[]);const promos=all.filter(p=>{const cat=(p.category||p.categoria||p.categoría||'').toLowerCase();return cat.includes('promo');});catalogCache[storeId]=promos;return promos;}
 
   catch(e){catalogCache[storeId]=[];return[];}
 
@@ -1567,8 +1567,10 @@ function openPromoDetail(idx){
 
   document.getElementById('pp-store').innerHTML=`${logoHtml}${p.storeName}${p.dist?' · '+p.dist:''}`;
 
-  const pe=document.getElementById('pp-price');if(p.price){pe.textContent='$'+p.price;pe.style.display='';}else pe.style.display='none';
-
+const pe=document.getElementById('pp-price');
+var precio=parseFloat(p.price);
+if(!isNaN(precio)&&precio>0){pe.textContent='$'+precio.toFixed(2);pe.style.display='';}
+else{pe.textContent='Consultar precio';pe.style.display='';}
   document.getElementById('pp-desc').textContent=p.desc;
 
   document.getElementById('pp-btn-visit').onclick=()=>window.open(p.storeUrl,'_blank');
