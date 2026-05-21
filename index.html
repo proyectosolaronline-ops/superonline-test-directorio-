@@ -2817,42 +2817,6 @@ function shareQREmail(){
 }
 
 
-function debugPromoPrecio(){
-  console.log('═══════════════════════════');
-  console.log('🔍 DEBUG PRECIO PROMO');
-  console.log('═══════════════════════════');
-  console.log('PROMOS_LIST tiene', PROMOS_LIST.length, 'productos');
-  
-  if(PROMOS_LIST.length > 0){
-    PROMOS_LIST.forEach(function(p, i){
-      console.log('─── Promo #' + i + ' ───');
-      console.log('  Título:', p.title);
-      console.log('  Tienda:', p.storeName);
-      console.log('  Precio (raw):', p.price);
-      console.log('  Tipo precio:', typeof p.price);
-      console.log('  Precio numérico:', parseFloat(p.price));
-      console.log('  ¿Es válido?:', !isNaN(parseFloat(p.price)) && parseFloat(p.price) > 0);
-      console.log('  Descripción:', p.desc);
-      console.log('  Imagen:', p.img ? 'Sí' : 'No');
-      console.log('  StoreURL:', p.storeUrl);
-    });
-  } else {
-    console.log('⚠️ No hay promos cargadas');
-  }
-  
-  console.log('═══════════════════════════');
-  console.log('📦 CATALOG CACHE:');
-  Object.keys(catalogCache).forEach(function(key){
-    console.log('  Tienda ' + key + ': ' + catalogCache[key].length + ' productos');
-    if(catalogCache[key].length > 0){
-      console.log('    Muestra:', catalogCache[key][0].name, '| price:', catalogCache[key][0].price);
-    }
-  });
-  console.log('═══════════════════════════');
-}
-
-
-
  
 </script>
 
