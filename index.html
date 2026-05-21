@@ -965,27 +965,17 @@ body.fs-mode .fab-group{bottom:18px;right:12px;}
 </div>
 
 <div class="qr-modal" id="qr-modal">
-
   <div class="qr-box">
-
-    <div class="qr-title">QR — Directorio Easylink Web</div>
-
-    <div class="qr-sub">Escanea para abrir este directorio</div>
-
+    <div class="qr-title">Directorio Easylink Querétaro</div>
+    <div class="qr-sub">Aquí Busca lo que necesitas, Préstamos, Farmacias, Ferreterías, Consultorios y Más...</div>
     <div id="qr-canvas"></div>
-
     <div class="qr-url" id="qr-url-text"></div>
-
-    <div class="qr-actions">
-
-      <button class="qr-btn qr-btn-share" onclick="shareQR()">Compartir</button>
-
+    <div class="qr-actions" style="flex-direction:column;gap:8px;">
+      <button class="qr-btn" onclick="shareQRWhatsApp()" style="background:#25D366;color:#fff;">💬 Compartir por WhatsApp</button>
+      <button class="qr-btn" onclick="shareQREmail()" style="background:#ea4335;color:#fff;">📧 Compartir por Correo</button>
       <button class="qr-btn qr-btn-close" onclick="closeQRModal()">Cerrar</button>
-
     </div>
-
   </div>
-
 </div>
 
 <script>
@@ -2808,7 +2798,18 @@ var _tapExtCount=0,_tapExtTimer=null;
 
 function contarTapExt(e){e.stopPropagation();_tapExtCount++;clearTimeout(_tapExtTimer);_tapExtTimer=setTimeout(function(){_tapExtCount=0;},800);if(_tapExtCount>=3){_tapExtCount=0;window.open('promotores.html','_blank');}}
 
- 
+ function shareQRWhatsApp(){
+  var url = window.location.href;
+  var texto = encodeURIComponent("Directorio Easylink Querétaro - Aquí Busca lo que necesitas, Préstamos, Farmacias, Ferreterías, Consultorios y Más... " + url);
+  window.open('https://wa.me/?text=' + texto, '_blank');
+}
+
+function shareQREmail(){
+  var url = window.location.href;
+  var asunto = encodeURIComponent("Directorio Easylink Querétaro");
+  var cuerpo = encodeURIComponent("Aquí Busca lo que necesitas, Préstamos, Farmacias, Ferreterías, Consultorios y Más...\n\n" + url);
+  window.location.href = 'mailto:?subject=' + asunto + '&body=' + cuerpo;
+}
 
 </script>
 
