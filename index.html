@@ -1193,7 +1193,7 @@ async function fetchStorePromos(storeId){
 
   if(catalogCache[storeId])return catalogCache[storeId];
 
-  try{const r=await fetch(BACKEND+'?action=stores.catalog&store='+encodeURIComponent(storeId));const d=await r.json();const all=d.products||d.items||(Array.isArray(d)?d:[]);const promos=all.filter(p=>{const cat=(p.category||p.categoria||p.categoría||'').toLowerCase();return cat.includes('promo');});catalogCache[storeId]=promos;return promos;}
+  try{const r=await fetch(BACKEND_MAESTRO+'?action=stores.catalog&store='+encodeURIComponent(storeId));const d=await r.json();const all=d.products||d.items||(Array.isArray(d)?d:[]);const promos=all.filter(p=>{const cat=(p.category||p.categoria||p.categoría||'').toLowerCase();return cat.includes('promo');});catalogCache[storeId]=promos;return promos;}
 
   catch(e){catalogCache[storeId]=[];return[];}
 
