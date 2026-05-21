@@ -2799,14 +2799,14 @@ function contarTapExt(e){e.stopPropagation();_tapExtCount++;clearTimeout(_tapExt
 
  function shareQRWhatsApp(){
   var url = window.location.href;
-  var texto = encodeURIComponent("Directorio Easylink Querétaro - Aquí Busca lo que necesitas, Préstamos, Farmacias, Ferreterías, paleteria , fruterias ,Consultorios y Más... " + url);
+  var texto = encodeURIComponent("Directorio Easylink Querétaro - Aquí Busca lo que necesitas, Préstamos,comida, Farmacias, Ferreterías, paleteria , fruterias ,mecanicos,Consultorios y Más... " + url);
   window.open('https://wa.me/?text=' + texto, '_blank');
 }
 
 function shareQREmail(){
   var url = window.location.href;
   var asunto = encodeURIComponent("Directorio Easylink Querétaro");
-  var cuerpo = encodeURIComponent("Aquí Busca lo que necesitas, Préstamos, Farmacias, Ferreterías,paleteria , fruterias , Consultorios y Más...\n\n" + url);
+  var cuerpo = encodeURIComponent("Aquí Busca lo que necesitas, Préstamos, comida, Farmacias, Ferreterías,paleteria , fruterias ,mecanicos, Consultorios y Más...\n\n" + url);
   window.location.href = 'mailto:?subject=' + asunto + '&body=' + cuerpo;
 }
 
