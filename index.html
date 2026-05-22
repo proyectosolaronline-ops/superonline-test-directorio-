@@ -656,7 +656,12 @@ body.fs-mode .fab-group{bottom:18px;right:12px;}
 <div id="map"></div>
 
 <div id="promo-ticker">
-
+<!-- SELECTOR RADIO KM -->
+<div id="kmradio-selector" style="position:absolute;top:10px;left:10px;z-index:1000;background:rgba(255,255,255,.92);backdrop-filter:blur(10px);border-radius:20px;padding:4px 10px;display:flex;align-items:center;gap:6px;font-family:Inter,sans-serif;box-shadow:0 2px 12px rgba(0,0,0,.2);font-size:13px;">
+  <button onclick="cambiarRadioKm(-1)" style="width:28px;height:28px;border-radius:50%;border:1.5px solid #007bff;background:#fff;color:#007bff;font-size:18px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;">−</button>
+  <span id="kmRadio" style="font-weight:700;color:#007bff;min-width:36px;text-align:center;">30 km</span>
+  <button onclick="cambiarRadioKm(1)" style="width:28px;height:28px;border-radius:50%;border:1.5px solid #007bff;background:#fff;color:#007bff;font-size:18px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;">+</button>
+</div>
   <div class="pticker-track" id="pticker-track"></div>
 
   <div class="pticker-dots" id="pticker-dots"></div>
@@ -988,8 +993,44 @@ const BACKEND         = 'https://script.google.com/macros/s/AKfycbwUhTHQkBhLIvF9
 const BACKEND_MAESTRO = 'https://script.google.com/macros/s/AKfycbwQ_ESx2c-3DL83b_-ujjmvevSBGtwjPZ0e1wEHv3cnLbJOplTJDYUb_UiRVyTYXik/exec';
 
 const STORE_BASE      = 'https://proyectosolaronline-ops.github.io/superOnline-Tienda/index.html';
-
+// ═══ SELECTOR DE RADIO KM ═══
+const KMS_PERMITIDOS = [5, 10, 15, 20, 25, 30, 35, 40];
 let RADIO_KM = 30;
+
+function cambiarRadioKm(direccion) {
+    let indiceActual = KMS_PERMITIDOS.indexOf(RADIO_KM);
+    let nuevoIndice = indiceActual + direccion;
+    
+    if (nuevoIndice >= 0 && nuevoIndice < KMS_PERMITIDOS.length) {
+        RADIO_KM = KMS_PERMITIDOS[nuevoIndice];
+        document.getElementById('kmRadio').textContent = RADIO_KM + ' km';
+        actualizarTiendasCercanas();
+    }
+}
+
+function actualizarTiendasCercanas() {
+    if (!userLat || !userLng) return;
+    
+    nearbyStores = ALL_STORES.filter(s => {
+        const cfg = s.config || {};
+        const lat = parseFloat(cfg.locationLat);
+        const lng = parseFloat(cfg.locationLng);
+        return !isNaN(lat) && !isNaN(lng) && haversineKm(userLat, userLng, lat, lng) <= RADIO_KM;
+    });
+    
+    // Limpiar marcadores viejos
+    map.eachLayer(l => {
+        if (l instanceof L.Marker && l.getTooltip && l.getTooltip().getContent() !== 'Tu ubicación') {
+            map.removeLayer(l);
+        }
+    });
+    
+    // Agregar nuevos marcadores
+    addMarkersToMap(nearbyStores);
+    
+    // Actualizar promos
+    buildPromosFromCatalogs(nearbyStores);
+ }
 
 const MAX_PROMO_FETCH = 8;
 
