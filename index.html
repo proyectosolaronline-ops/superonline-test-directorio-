@@ -656,13 +656,47 @@ body.fs-mode .fab-group{bottom:18px;right:12px;}
 
   <div id="map"></div>
 
-<!-- SELECTOR RADIO KM -->
-<div id="kmradio-selector" style="position:absolute;top:10px;left:10px;z-index:1000;background:rgba(255,255,255,.92);backdrop-filter:blur(10px);border-radius:20px;padding:4px 10px;display:flex;align-items:center;gap:6px;font-family:Inter,sans-serif;box-shadow:0 2px 12px rgba(0,0,0,.2);font-size:13px;">
-  <button onclick="cambiarRadioKm(-1)" style="width:28px;height:28px;border-radius:50%;border:1.5px solid #007bff;background:#fff;color:#007bff;font-size:18px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;">−</button>
-  <span id="kmRadio" style="font-weight:700;color:#007bff;min-width:36px;text-align:center;">30 km</span>
-  <button onclick="cambiarRadioKm(1)" style="width:28px;height:28px;border-radius:50%;border:1.5px solid #007bff;background:#fff;color:#007bff;font-size:18px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;">+</button>
+<!-- SELECTOR RADIO KM - VERTICAL IZQUIERDO -->
+<div id="kmradio-selector" style="
+  position: absolute;
+  top: 50%;
+  left: 10px;
+  transform: translateY(-50%);
+  z-index: 1000;
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 8px 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  font-family: Inter, sans-serif;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+  font-size: 12px;
+">
+  <button onclick="cambiarRadioKm(1)" style="
+    width: 30px; height: 30px; border-radius: 50%;
+    border: 1.5px solid #007bff; background: #fff;
+    color: #007bff; font-size: 20px; font-weight: 700;
+    cursor: pointer; display: flex; align-items: center;
+    justify-content: center; line-height: 1;
+  ">+</button>
+  
+  <span id="kmRadio" style="
+    font-weight: 700; color: #007bff;
+    text-align: center; writing-mode: horizontal-tb;
+    font-size: 13px;
+  ">30<br>km</span>
+  
+  <button onclick="cambiarRadioKm(-1)" style="
+    width: 30px; height: 30px; border-radius: 50%;
+    border: 1.5px solid #007bff; background: #fff;
+    color: #007bff; font-size: 20px; font-weight: 700;
+    cursor: pointer; display: flex; align-items: center;
+    justify-content: center; line-height: 1;
+  ">−</button>
 </div>
-
 <div id="promo-ticker">
   <div class="pticker-track" id="pticker-track"></div>
   <div class="pticker-dots" id="pticker-dots"></div>
