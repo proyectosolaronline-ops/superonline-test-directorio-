@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 
 <html lang="es">
@@ -588,19 +589,63 @@ body.fs-mode .fab-group{bottom:18px;right:12px;}
 }
 
 .fab-contacto {
-
   animation: pulse-contacto 2s infinite;
-
 }
-
 @keyframes pulse-contacto {
-
   0%, 100% { box-shadow: 0 5px 18px rgba(37,211,102,.4); }
-
   50% { box-shadow: 0 5px 30px rgba(37,211,102,.8), 0 0 20px rgba(37,211,102,.4); }
+}
+ #timer-permanencia{
+  position:fixed;
+  bottom:36px;
+  left:14px;
+  z-index:1201;
+  background:rgba(0,0,0,.55);
+  color:#fff;
+  border-radius:50%;
+  width:28px;
+  height:28px;
+  font-size:10px;
+  font-weight:700;
+  font-family:'Inter',sans-serif;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  pointer-events:none;
+  transition:background .4s;
+}
+#timer-permanencia.alerta{background:rgba(255,105,0,.9);}
 
-} 
-
+#fab-contacto-left{
+  position:fixed;
+  bottom:28px;
+  left:14px;
+  z-index:1202;
+  display:none;
+  align-items:center;
+  gap:9px;
+  color:#000;
+  border:none;
+  border-radius:50px;
+  padding:12px 18px 12px 14px;
+  font-family:'Inter',sans-serif;
+  font-size:13px;
+  font-weight:700;
+  cursor:pointer;
+  white-space:nowrap;
+  background:#f59e0b;
+  box-shadow:0 5px 18px rgba(245,158,11,.45);
+  animation:pulso-amber 1.4s ease-in-out infinite;
+  animation-play-state:running;
+}
+@keyframes pulso-amber{
+  0%  {background:#f59e0b;box-shadow:0 5px 18px rgba(245,158,11,.45);color:#7c2d00;}
+  25% {background:#d97706;box-shadow:0 5px 26px rgba(217,119,6,.75);color:#000;}
+  50% {background:#92400e;box-shadow:0 5px 36px rgba(146,64,14,.9),0 0 22px rgba(180,83,9,.5);color:#fef3c7;}
+  75% {background:#d97706;box-shadow:0 5px 26px rgba(217,119,6,.75);color:#000;}
+  100%{background:#f59e0b;box-shadow:0 5px 18px rgba(245,158,11,.45);color:#7c2d00;}
+}
+#fab-contacto-left svg{flex-shrink:0;}
 </style>
 
 </head>
@@ -653,54 +698,17 @@ body.fs-mode .fab-group{bottom:18px;right:12px;}
 
 </div>
 
+<div id="map"></div>
 
-  <div id="map"></div>
-
-<!-- SELECTOR RADIO KM - VERTICAL IZQUIERDO -->
-<div id="kmradio-selector" style="
-  position: absolute;
-  top: 50%;
-  left: 10px;
-  transform: translateY(-50%);
-  z-index: 1000;
-  background: rgba(255,255,255,0.92);
-  backdrop-filter: blur(10px);
-  border-radius: 20px;
-  padding: 8px 6px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-  font-family: Inter, sans-serif;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.2);
-  font-size: 12px;
-">
-  <button onclick="cambiarRadioKm(1)" style="
-    width: 30px; height: 30px; border-radius: 50%;
-    border: 1.5px solid #007bff; background: #fff;
-    color: #007bff; font-size: 20px; font-weight: 700;
-    cursor: pointer; display: flex; align-items: center;
-    justify-content: center; line-height: 1;
-  ">+</button>
-  
-  <span id="kmRadio" style="
-    font-weight: 700; color: #007bff;
-    text-align: center; writing-mode: horizontal-tb;
-    font-size: 13px;
-  ">30<br>km</span>
-  
-  <button onclick="cambiarRadioKm(-1)" style="
-    width: 30px; height: 30px; border-radius: 50%;
-    border: 1.5px solid #007bff; background: #fff;
-    color: #007bff; font-size: 20px; font-weight: 700;
-    cursor: pointer; display: flex; align-items: center;
-    justify-content: center; line-height: 1;
-  ">−</button>
-</div>
 <div id="promo-ticker">
+
   <div class="pticker-track" id="pticker-track"></div>
+
   <div class="pticker-dots" id="pticker-dots"></div>
+
 </div>
+
+  
 
 <!-- PANEL ESTADÍSTICAS -->
 
@@ -771,20 +779,12 @@ body.fs-mode .fab-group{bottom:18px;right:12px;}
 </button> -->
 
 <div class="fab-group">
-
-<button class="fab fab-contacto" id="fab-contacto" onclick="abrirFormularioContacto()" title="Ser parte del directorio" style="background:#25D366;color:#fff;display:none;"> 
-
- <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-
-      <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-
-      <polyline points="22,6 12,13 2,6"/>
-
-    </svg>
-
-  </button>
-
- 
+<button class="fab fab-contacto" id="fab-contacto" onclick="abrirFormularioContacto()" title="Ser parte del directorio" style="background:#25D366;color:#fff;display:none;">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+    <polyline points="22,6 12,13 2,6"/>
+  </svg>
+</button>
 
   <button class="fab fab-fs" id="btn-fs" onclick="toggleFullscreen()" title="Pantalla completa">
 
@@ -820,9 +820,17 @@ body.fs-mode .fab-group{bottom:18px;right:12px;}
   </button>
 
 </div>
+<div id="timer-permanencia">0:00</div>
+
+<button id="fab-contacto-left" onclick="abrirFormularioContacto()">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/>
+    <path d="M12 8v4m0 4h.01"/>
+  </svg>
+  📋 Ser parte del directorio
+</button>
 
 <div id="searchPanel">
-
   <div class="sp-header">
 
     <div class="sp-search-inner">
@@ -1025,44 +1033,8 @@ const BACKEND         = 'https://script.google.com/macros/s/AKfycbwUhTHQkBhLIvF9
 const BACKEND_MAESTRO = 'https://script.google.com/macros/s/AKfycbwQ_ESx2c-3DL83b_-ujjmvevSBGtwjPZ0e1wEHv3cnLbJOplTJDYUb_UiRVyTYXik/exec';
 
 const STORE_BASE      = 'https://proyectosolaronline-ops.github.io/superOnline-Tienda/index.html';
-// ═══ SELECTOR DE RADIO KM ═══
-const KMS_PERMITIDOS = [5, 10, 15, 20, 25, 30, 35, 40];
-let RADIO_KM = 30;
 
-function cambiarRadioKm(direccion) {
-    let indiceActual = KMS_PERMITIDOS.indexOf(RADIO_KM);
-    let nuevoIndice = indiceActual + direccion;
-    
-    if (nuevoIndice >= 0 && nuevoIndice < KMS_PERMITIDOS.length) {
-        RADIO_KM = KMS_PERMITIDOS[nuevoIndice];
-        document.getElementById('kmRadio').textContent = RADIO_KM + ' km';
-        actualizarTiendasCercanas();
-    }
-}
-
-function actualizarTiendasCercanas() {
-    if (!userLat || !userLng) return;
-    
-    nearbyStores = ALL_STORES.filter(s => {
-        const cfg = s.config || {};
-        const lat = parseFloat(cfg.locationLat);
-        const lng = parseFloat(cfg.locationLng);
-        return !isNaN(lat) && !isNaN(lng) && haversineKm(userLat, userLng, lat, lng) <= RADIO_KM;
-    });
-    
-    // Limpiar marcadores viejos
-    map.eachLayer(l => {
-        if (l instanceof L.Marker && l.getTooltip && l.getTooltip().getContent() !== 'Tu ubicación') {
-            map.removeLayer(l);
-        }
-    });
-    
-    // Agregar nuevos marcadores
-    addMarkersToMap(nearbyStores);
-    
-    // Actualizar promos
-    buildPromosFromCatalogs(nearbyStores);
- }
+let RADIO_KM = 20;
 
 const MAX_PROMO_FETCH = 8;
 
@@ -1083,67 +1055,60 @@ function haversineKm(la1,ln1,la2,ln2){var R=6371,dL=(la2-la1)*Math.PI/180,dN=(ln
 function buildStoreUrl(id){return STORE_BASE+'?backend='+encodeURIComponent(BACKEND)+'&store='+encodeURIComponent(id);}
 
 window.addEventListener('load',async()=>{
+  // PASO 1: mapa inmediato + mensaje ANTES de cargar
+  userLat=20.5881;
+  userLng=-100.3899;
+  mostrarMensajeBuscando();
+  initMap();
 
+  // PASO 2: cargar tiendas
   try{
-
     const [r1,r2]=await Promise.allSettled([
-
       fetch(BACKEND+'?action=stores.directory&t='+Date.now()),
-
       fetch(BACKEND_MAESTRO+'?action=stores.directory&t='+Date.now())
-
     ]);
-
     var sl=[],se=[];
-
     if(r1.status==='fulfilled'){const d=await r1.value.json();sl=(d.stores||[]).filter(s=>!s.isExternal);}
-
     if(r2.status==='fulfilled'){const d=await r2.value.json();se=(d.stores||[]).filter(s=>s.isExternal===true);}
-
-ALL_STORES=[...sl,...se].map(s=>{s.config=typeof s.config==='string'?JSON.parse(s.config):(s.config||{});return s;});
-
-    
-
+    ALL_STORES=[...sl,...se].map(s=>{s.config=typeof s.config==='string'?JSON.parse(s.config):(s.config||{});return s;});
   }catch(e){console.warn('Error:',e);}
 
-  if(navigator.geolocation){
-
-    navigator.geolocation.getCurrentPosition(
-
-      pos=>{
-
-        userLat=pos.coords.latitude;
-
-        userLng=pos.coords.longitude;
-
-        initMap();
-
-      },
-
-      ()=>{
-
-        userLat=20.5881;
-
-        userLng=-100.3899;
-
-        initMap();
-
+  // PASO 3: GPS real — actualiza encima del mapa ya visible
+function cargarTiendasConUbicacion(){
+    if(window._quitarMensajeBuscando){window._quitarMensajeBuscando();window._quitarMensajeBuscando=null;}
+    nearbyStores=ALL_STORES.filter(s=>{
+      const cfg=s.config||{},lat=parseFloat(cfg.locationLat),lng=parseFloat(cfg.locationLng);
+      return !isNaN(lat)&&!isNaN(lng)&&haversineKm(userLat,userLng,lat,lng)<=RADIO_KM;
+    });
+    map.eachLayer(l=>{
+      if(l instanceof L.Marker&&l.getTooltip){
+        const tt=l.getTooltip();
+        if(tt&&tt.getContent()!=='Tu ubicación')map.removeLayer(l);
       }
-
-    );
-
-  } else {
-
-    userLat=20.5881;
-
-    userLng=-100.3899;
-
-    initMap();
-
+    });
+    addMarkersToMap(nearbyStores);
+    fitToNearestStore();
+    buildPromosFromCatalogs(nearbyStores);
   }
 
+  if(navigator.geolocation){
+    navigator.geolocation.getCurrentPosition(
+      pos=>{
+        userLat=pos.coords.latitude;
+        userLng=pos.coords.longitude;
+        // Actualizar marcador de posición
+        map.eachLayer(l=>{if(l instanceof L.CircleMarker)map.removeLayer(l);});
+        L.circleMarker([userLat,userLng],{radius:9,color:'#16a34a',fillColor:'#fff',weight:3,fillOpacity:1,zIndexOffset:1000})
+          .addTo(map).bindTooltip('Tu ubicación',{permanent:false,direction:'top'});
+        map.setView([userLat,userLng],13,{animate:true});
+        cargarTiendasConUbicacion();
+      },
+      ()=>{ cargarTiendasConUbicacion(); }  // GPS falló → usa coords default ya cargadas
+    );
+  } else {
+    cargarTiendasConUbicacion();
+  }
 });
-
   async function buildPromosFromCatalogs(stores){
 
   const soloPropias=stores.filter(s=>!s.isExternal);
@@ -1266,7 +1231,7 @@ async function fetchStorePromos(storeId){
 
   if(catalogCache[storeId])return catalogCache[storeId];
 
-  try{const r=await fetch(BACKEND_MAESTRO+'?action=stores.catalog&store='+encodeURIComponent(storeId));const d=await r.json();const all=d.products||d.items||(Array.isArray(d)?d:[]);const promos=all.filter(p=>{const cat=(p.category||p.categoria||p.categoría||'').toLowerCase();return cat.includes('promo');});catalogCache[storeId]=promos;return promos;}
+  try{const r=await fetch(BACKEND+'?action=stores.catalog&store='+encodeURIComponent(storeId));const d=await r.json();const all=d.products||d.items||(Array.isArray(d)?d:[]);const promos=all.filter(p=>{const cat=(p.category||p.categoria||p.categoría||'').toLowerCase();return cat.includes('promo');});catalogCache[storeId]=promos;return promos;}
 
   catch(e){catalogCache[storeId]=[];return[];}
 
@@ -1290,6 +1255,23 @@ function fitToNearestStore(){
 
   map.fitBounds(bounds,{padding:[55,55],maxZoom:mz,animate:true});
 
+}
+function mostrarMensajeBuscando(){
+  var existing=document.getElementById('msg-buscando');
+  if(existing)existing.remove();
+  var msg=document.createElement('div');
+  msg.id='msg-buscando';
+  msg.style.cssText='position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:9999;background:rgba(26,115,232,.92);color:#fff;padding:18px 28px;border-radius:16px;font-family:Inter,sans-serif;font-size:15px;font-weight:600;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,.3);pointer-events:none;opacity:1;transition:opacity .6s;';
+  msg.innerHTML='🗺️ Gracias por tu visita<br><span style="font-size:12px;opacity:.85;font-weight:400;">Buscando tiendas cerca de ti...</span>';
+  document.body.appendChild(msg);
+  function quitarMsg(){
+    var el=document.getElementById('msg-buscando');
+    if(!el)return;
+    el.style.opacity='0';
+    setTimeout(function(){var el2=document.getElementById('msg-buscando');if(el2)el2.remove();},700);
+  }
+  window._quitarMensajeBuscando=quitarMsg;
+  setTimeout(quitarMsg,6000);
 }
 
 function initMap(){
@@ -1347,14 +1329,11 @@ promotorControl.addTo(map);
  L.control.zoom({position:'bottomright'}).addTo(map);
 
   L.circleMarker([userLat,userLng],{radius:9,color:'#16a34a',fillColor:'#fff',weight:3,fillOpacity:1,zIndexOffset:1000}).addTo(map).bindTooltip('Tu ubicación',{permanent:false,direction:'top'});
-
-  nearbyStores=ALL_STORES.filter(s=>{const cfg=s.config||{},lat=parseFloat(cfg.locationLat),lng=parseFloat(cfg.locationLng);return !isNaN(lat)&&!isNaN(lng)&&haversineKm(userLat,userLng,lat,lng)<=RADIO_KM;});
-
+nearbyStores=ALL_STORES.slice(0,20);
   addMarkersToMap(nearbyStores);
-
   map.whenReady(()=>setTimeout(fitToNearestStore,250));
-
-  buildPromosFromCatalogs(nearbyStores);  // ← ESTA LÍNEA DEBE EXISTIR
+  buildPromosFromCatalogs(nearbyStores);
+  mostrarMensajeBuscando(); // ← ESTA LÍNEA DEBE EXISTIR
 
 }
 
@@ -2246,20 +2225,14 @@ async function refreshData(){
 
     // Refiltrar cercanas
 
-    if(userLat&&userLng){
-
-      nearbyStores=ALL_STORES.filter(s=>{
-
+if(userLat&&userLng){
+      var todas=ALL_STORES.filter(s=>{
         var cfg=s.config||{};
-
         var lat=parseFloat(cfg.locationLat),lng=parseFloat(cfg.locationLng);
-
         return !isNaN(lat)&&!isNaN(lng)&&haversineKm(userLat,userLng,lat,lng)<=RADIO_KM;
-
       });
-
+      nearbyStores=todas.length>30?todas.slice(0,20):todas;
     }
-
     
 
     // Cerrar popups abiertos
@@ -2846,28 +2819,44 @@ async function enviarSolicitudContacto() {
 
 // Mostrar botón de contacto solo si: clic en tienda + 10 min navegando
 
+window._clicksTienda = 0;
 window._timeStart = Date.now();
 
- window._clicksTienda = 0;
+(function(){
+  var LIMITE_MS = 3 * 60 * 1000;
+  var timerEl = null;
 
-window._timeStart = Date.now();
+  function pad(n){ return n < 10 ? '0'+n : ''+n; }
 
-setInterval(function(){
+  function actualizarTimer(){
+    timerEl = timerEl || document.getElementById('timer-permanencia');
+    if(!timerEl) return;
 
-    var btn = document.getElementById('fab-contacto');
+    var elapsed = Date.now() - window._timeStart;
+    var seg     = Math.floor(elapsed / 1000);
+    var min     = Math.floor(seg / 60);
+    var s       = seg % 60;
 
-    if(!btn) return;
+    timerEl.textContent = min + ':' + pad(s);
 
-    var visible = btn.style.display !== 'none';
-
-    if(!visible && window._clicksTienda >= 3 && (Date.now() - window._timeStart) >= 600000){
-
-        btn.style.display = 'flex';
-
+    if(elapsed >= LIMITE_MS - 60000){
+      timerEl.classList.add('alerta');
     }
 
-}, 10000);
+    if(elapsed >= LIMITE_MS){
+      timerEl.style.display = 'none';
+      var btn = document.getElementById('fab-contacto-left');
+      if(btn){ btn.style.display = 'flex'; }
+      clearInterval(window._timerInterval);
+    }
+  }
 
+  window.addEventListener('load', function(){
+    timerEl = document.getElementById('timer-permanencia');
+    actualizarTimer();
+    window._timerInterval = setInterval(actualizarTimer, 1000);
+  });
+})();
 var _tapExtCount=0,_tapExtTimer=null;
 
 function contarTapExt(e){e.stopPropagation();_tapExtCount++;clearTimeout(_tapExtTimer);_tapExtTimer=setTimeout(function(){_tapExtCount=0;},800);if(_tapExtCount>=3){_tapExtCount=0;window.open('promotores.html','_blank');}}
@@ -2979,26 +2968,7 @@ function shareQREmail(){
 
 </div>
 
-<!--<a href="index4.html" target="_blank" style="
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  z-index: 999999;
-  background: #00e5ff;
-  color: #000;
-  border: none;
-  border-radius: 8px;
-  padding: 10px 16px;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: 700;
-  font-family: 'Inter', sans-serif;
-  text-decoration: none;
-  box-shadow: 0 4px 12px rgba(0,229,255,.4);
-  display: flex;
-  align-items: center;
-  gap: 6px;
-">🔧 DEBUG</a> -->
+ 
 
 </body>
 
