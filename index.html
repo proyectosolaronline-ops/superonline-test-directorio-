@@ -1016,12 +1016,12 @@ body.fs-mode .fab-group{bottom:18px;right:12px;}
     <div class="qr-sub">Aquí Busca lo que necesitas, Préstamos, Farmacias, Ferreterías, Consultorios y Más...</div>
     <div id="qr-canvas"></div>
     <div class="qr-url" id="qr-url-text"></div>
-    <div class="qr-actions" style="flex-direction:column;gap:8px;">
-      <button class="qr-btn" onclick="shareQRWhatsApp()" style="background:#25D366;color:#fff;">💬 Compartir por WhatsApp</button>
-      <button class="qr-btn" onclick="shareQREmail()" style="background:#ea4335;color:#fff;">📧 Compartir por Correo</button>
-      <button class="qr-btn qr-btn-close" onclick="closeQRModal()">Cerrar</button>
-    </div>
-  </div>
+  <div class="qr-actions" style="flex-direction:column;gap:8px;">
+  <button class="qr-btn" onclick="shareQRWhatsApp()" style="background:#25D366;color:#fff;">💬 Compartir por WhatsApp</button>
+  <button class="qr-btn" onclick="shareQREmail()" style="background:#ea4335;color:#fff;">📧 Compartir por Correo</button>
+  <button class="qr-btn" onclick="window.open('Qrimpresion.html','_blank')" style="background:#f59e0b;color:#000;">🖨️ Imprimir QR</button>
+  <button class="qr-btn qr-btn-close" onclick="closeQRModal()">Cerrar</button>
+</div>  </div>
 </div>
 
 <script>
@@ -1997,8 +1997,10 @@ document.addEventListener('fullscreenchange',()=>{if(!document.fullscreenElement
 
 /* ══ QR ══ */
 
-function showQRModal(){const url=window.location.href;document.getElementById('qr-url-text').textContent=url;const canvas=document.getElementById('qr-canvas');canvas.innerHTML='';if(qrInstance){try{qrInstance.clear();}catch(e){}}qrInstance=new QRCode(canvas,{text:url,width:200,height:200,colorDark:'#1a1a1a',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.M});document.getElementById('qr-modal').classList.add('open');}
-
+function showQRModal(){
+  // Redirigir directamente a Qrimpresion.html
+  window.open('Qrimpresion.html', '_blank');
+}
   function showFlyerQR(){
 
   var url=window.location.href;
