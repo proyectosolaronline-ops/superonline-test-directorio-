@@ -1,4 +1,4 @@
-version gps pin v2
+version gps pin v4
 <!DOCTYPE html>
 
 <html lang="es">
@@ -566,19 +566,18 @@ body.fs-mode .fab-group{bottom:18px;right:12px;}
 
 .leaflet-control-zoom{margin-bottom:76px!important;margin-right:8px!important;}
 
-.pin-label{
+.leaflet-tooltip.pin-label{
   background:rgba(255,255,255,.95)!important;
-  border:none!important;
+  border:1px solid #ddd!important;
   border-radius:8px!important;
-  padding:4px 8px!important;
+  padding:5px 8px!important;
   box-shadow:0 2px 8px rgba(0,0,0,.25)!important;
   font-size:9px!important;
   white-space:nowrap!important;
-  pointer-events:none!important;
-  margin-top:-8px!important;
+  color:#111!important;
 }
-.pin-label::before{
-  display:none!important;
+.leaflet-tooltip.pin-label::before{
+  border-top-color:rgba(255,255,255,.95)!important;
 }
 .fab-contacto {
   animation: pulse-contacto 2s infinite;
@@ -638,6 +637,11 @@ body.fs-mode .fab-group{bottom:18px;right:12px;}
   100%{background:#f59e0b;box-shadow:0 5px 18px rgba(245,158,11,.45);color:#7c2d00;}
 }
 #fab-contacto-left svg{flex-shrink:0;}
+.pin-marker{
+  background:transparent!important;
+  border:none!important;
+}
+ 
 </style>
 
 </head>
@@ -1381,28 +1385,29 @@ function addMarkersToMap(stores){
 
     
 
-    const icon=L.divIcon({html:pinHTML,className:'',iconSize:[56,56],iconAnchor:[28,28]});
-
+const icon=L.divIcon({html:pinHTML,className:'pin-marker',iconSize:[56,56],iconAnchor:[28,56]});
 L.marker([lat,lng],{icon})
 
   .addTo(map)
 
-.bindTooltip(()=>{
+.bindTooltip((function(s, cfg, esMovil) {
+    return function() {
         stats.clicks++;document.getElementById('stats-clicks').textContent=stats.clicks;
-    const cfg=s.config||{};
-    const nombre=s.nombre_tienda||s.name||'Tienda';
-    const tipoNegocio=cfg.tipoNegocio||cfg.businessType||cfg.tipo_negocio||cfg.tipo||'';
-    const tipo=esMovil?'🛵 Servicio Móvil':(s.isExternal?(tipoNegocio||'Tienda externa'):'Tienda Easylink');
-    const colonia=cfg.colonia||'';
-    const localidad=cfg.localidad||cfg.city||'';
-    const direccion=[colonia,localidad].filter(Boolean).join(', ');
-    
-    return `<div style="text-align:center;font-family:Inter,sans-serif;line-height:1.3;min-width:100px;">
-      <div style="font-weight:700;font-size:11px;color:#111;">${nombre}</div>
-      <div style="font-size:9px;color:#555;font-weight:500;">${tipo}</div>
-      ${direccion?`<div style="font-size:8px;color:#888;margin-top:2px;border-top:1px solid #eee;padding-top:2px;">📍 ${direccion}</div>`:''}
-    </div>`;
-  },{direction:'top',offset:[0,-40],permanent:true,opacity:1,className:'pin-label'})
+        const nombre=s.nombre_tienda||s.name||'Tienda';
+        const tipoNegocio=cfg.tipoNegocio||cfg.businessType||cfg.tipo_negocio||cfg.tipo||'';
+        const tipo=esMovil?'🛵 Móvil':(s.isExternal?(tipoNegocio||'Tienda externa'):'Easylink');
+        const colonia=cfg.colonia||'';
+        const localidad=cfg.localidad||cfg.city||'';
+        const direccion=[colonia,localidad].filter(Boolean).join(', ');
+        
+        var html='<div style="font-family:Inter,sans-serif;text-align:center;line-height:1.3;">';
+        html+='<div style="font-weight:700;font-size:11px;color:#111;">'+nombre+'</div>';
+        html+='<div style="font-size:9px;color:#555;">'+tipo+'</div>';
+        if(direccion) html+='<div style="font-size:8px;color:#888;margin-top:1px;">📍 '+direccion+'</div>';
+        html+='</div>';
+        return html;
+    };
+})(s, cfg, esMovil),{direction:'top',offset:[0,-36],permanent:true,opacity:1,className:'pin-label'})
 
   .bindPopup(()=>{
 
