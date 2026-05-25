@@ -1,4 +1,4 @@
-
+version gps pin
 <!DOCTYPE html>
 
 <html lang="es">
@@ -1395,25 +1395,20 @@ L.marker([lat,lng],{icon})
 
   .addTo(map)
 
-  .bindTooltip(()=>{
-
-        stats.clicks++;document.getElementById('stats-clicks').textContent=stats.clicks;
-
+.bindTooltip(()=>{
+    stats.clicks++;document.getElementById('stats-clicks').textContent=stats.clicks;
     const cfg=s.config||{};
-
     const nombre=s.nombre_tienda||s.name||'Tienda';
-
     const tipo=esMovil?'🛵 Servicio Móvil':(s.isExternal?(cfg.tipoNegocio||cfg.businessType||cfg.tipo_negocio||cfg.tipo||'Tienda externa'):'Tienda Easylink');
-
-    return `<div style="text-align:center;font-family:Inter,sans-serif;line-height:1.2;">
-
+    const colonia=cfg.colonia||'';
+    const localidad=cfg.localidad||cfg.city||'';
+    const ubicacion=[colonia,localidad].filter(Boolean).join(', ');
+    return `<div style="text-align:center;font-family:Inter,sans-serif;line-height:1.3;">
       <div style="font-weight:600;font-size:10px;color:#222;">${nombre}</div>
-
       <div style="font-size:8px;color:#777;">${tipo}</div>
-
+      ${ubicacion?`<div style="font-size:7px;color:#999;margin-top:1px;">📍 ${ubicacion}</div>`:''}
     </div>`;
-
-  },{direction:'bottom',offset:[0,-30],permanent:true,opacity:1,className:'pin-label'})
+  },{direction:'bottom',offset:[0,-34],permanent:true,opacity:1,className:'pin-label'})
 
   .bindPopup(()=>{
 
