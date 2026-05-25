@@ -1,4 +1,4 @@
-version gps pin v4
+version gps pin v5
 <!DOCTYPE html>
 
 <html lang="es">
@@ -1403,7 +1403,8 @@ L.marker([lat,lng],{icon})
         var html='<div style="font-family:Inter,sans-serif;text-align:center;line-height:1.3;">';
         html+='<div style="font-weight:700;font-size:11px;color:#111;">'+nombre+'</div>';
         html+='<div style="font-size:9px;color:#555;">'+tipo+'</div>';
-        if(direccion) html+='<div style="font-size:8px;color:#888;margin-top:1px;">📍 '+direccion+'</div>';
+        const dir = direccion || cfg.description || '';
+        if(dir) html+='<div style="font-size:8px;color:#888;margin-top:1px;">📍 '+dir+'</div>';
         html+='</div>';
         return html;
     };
