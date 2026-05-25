@@ -1,4 +1,4 @@
-version gps pin
+version gps pin v1
 <!DOCTYPE html>
 
 <html lang="es">
@@ -1443,6 +1443,10 @@ L.marker([lat,lng],{icon})
       else if(s.isExternal) html+=`<span style="font-size:9px;background:#fff3e0;color:#e65100;padding:2px 7px;border-radius:10px;font-weight:700;margin-left:6px;">🏪 Externa</span>`;
 
       html+=`<p style="font-size:11px;color:#888;margin:4px 0;">${tipo}</p>`;
+     const colonia=cfg.colonia||'';
+const localidad=cfg.localidad||cfg.city||'';
+const ubicacion=[colonia,localidad].filter(Boolean).join(', ');
+if(ubicacion) html+=`<p style="font-size:11px;color:#666;margin:2px 0;">📍 ${ubicacion}</p>`;
 
       html+=`<p style="font-size:12px;color:#444;margin:4px 0;">${desc}</p>`;
 
