@@ -1,3 +1,4 @@
+ver.01
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -156,10 +157,16 @@
 <body>
 
 <div id="controles">
-  <h2>🖨️ QR Easylink — 4 por hoja carta vertical</h2>
+  <h2>🖨️ QR Easylink — 4 por hoja carta</h2>
+  <select id="selZona" style="padding:8px 12px;border-radius:8px;border:none;font-size:13px;font-weight:700;color:#1a73e8;cursor:pointer;">
+    <option value="general">📍 General (Todo México)</option>
+    <option value="yucatan">🌮 Yucatán</option>
+    <option value="bcs">🌊 Baja California Sur</option>
+    <option value="cdmx">🏙️ CDMX</option>
+  </select>
+  <button class="btn-print" onclick="actualizarQR()">🔄 Actualizar QR</button>
   <button class="btn-print" onclick="window.print()">🖨️ Imprimir / PDF</button>
 </div>
-
 <div id="hoja">
 
   <!-- CELDA 1 -->
@@ -283,13 +290,24 @@
   </div>
 
 </div>
-
 <script>
-var URL_QR = 'https://proyectosolaronline-ops.github.io/Cat-logo-tienda-online/';
-window.addEventListener('load', function(){
+// URLs base
+var URL_BASE = 'https://proyectosolaronline-ops.github.io/Cat-logo-tienda-online/';
+
+// Mapa de zonas
+var ZONAS = {
+  general: URL_BASE + 'index.html',
+  yucatan: URL_BASE + 'diryucatan.html',
+  bcs:     URL_BASE + 'dirbcs.html',
+  cdmx:    URL_BASE + 'dircdmx.html'
+};
+
+function generarQRs(url){
   [1,2,3,4].forEach(function(n){
-    new QRCode(document.getElementById('qr'+n), {
-      text: URL_QR,
+    var el = document.getElementById('qr'+n);
+    el.innerHTML = ''; // Limpiar QR anterior
+    new QRCode(el, {
+      text: url,
       width: 219,
       height: 219,
       colorDark: '#0d47a1',
@@ -297,6 +315,18 @@ window.addEventListener('load', function(){
       correctLevel: QRCode.CorrectLevel.M
     });
   });
+  console.log('✅ 4 QR generados con: ' + url);
+}
+
+function actualizarQR(){
+  var zona = document.getElementById('selZona').value;
+  var url  = ZONAS[zona];
+  generarQRs(url);
+}
+
+// Al cargar, generar con la zona por defecto (general)
+window.addEventListener('load', function(){
+  actualizarQR();
 });
 </script>
 </body>
