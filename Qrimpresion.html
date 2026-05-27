@@ -265,7 +265,7 @@ ver.01
       <div class="qr-corner tl"></div><div class="qr-corner tr"></div>
       <div class="qr-corner bl"></div><div class="qr-corner br"></div>
       <div class="qr-texto-arriba">
-        <span class="txt-cat">💰 Préstamos</span>
+        <span class="txt-cat">💰 Préstamos efectivo</span>
         <span class="txt-cat nar">🍔 Comida</span>
       </div>
       <div class="qr-texto-abajo">
@@ -290,22 +290,23 @@ ver.01
   </div>
 
 </div>
-<script>
-// URLs base
+ <script>
 var URL_BASE = 'https://proyectosolaronline-ops.github.io/Cat-logo-tienda-online/';
 
-// Mapa de zonas
-var ZONAS = {
-  general: URL_BASE + 'index.html',
-  yucatan: URL_BASE + 'diryucatan.html',
-  bcs:     URL_BASE + 'dirbcs.html',
-  cdmx:    URL_BASE + 'dircdmx.html'
-};
+function determinarZona(lat, lng){
+  if (lat >= 19.5 && lat <= 21.6 && lng >= -91.0 && lng <= -87.5) {
+    return 'diryucatan.html';
+  } else if (lat >= 23.1201 && lat <= 25.1201 && lng >= -112.3239 && lng <= -108.3239) {
+    return 'dirbcs.html';
+  } else {
+    return 'index.html';
+  }
+}
 
 function generarQRs(url){
   [1,2,3,4].forEach(function(n){
     var el = document.getElementById('qr'+n);
-    el.innerHTML = ''; // Limpiar QR anterior
+    el.innerHTML = '';
     new QRCode(el, {
       text: url,
       width: 219,
@@ -315,19 +316,25 @@ function generarQRs(url){
       correctLevel: QRCode.CorrectLevel.M
     });
   });
-  console.log('✅ 4 QR generados con: ' + url);
+  console.log('✅ QR generado para: ' + url);
 }
 
-function actualizarQR(){
-  var zona = document.getElementById('selZona').value;
-  var url  = ZONAS[zona];
-  generarQRs(url);
+if (navigator.geolocation) {
+  navigator.geolocation.getCurrentPosition(function(pos) {
+    var lat = pos.coords.latitude;
+    var lng = pos.coords.longitude;
+    var archivo = determinarZona(lat, lng);
+    var urlFinal = URL_BASE + archivo;
+    console.log('📍 GPS: Lat=' + lat + ' Lng=' + lng + ' → ' + archivo);
+    generarQRs(urlFinal);
+  }, function() {
+    console.log('⚠️ GPS falló, usando general');
+    generarQRs(URL_BASE + 'index.html');
+  });
+} else {
+  console.log('⚠️ Sin GPS, usando general');
+  generarQRs(URL_BASE + 'index.html');
 }
-
-// Al cargar, generar con la zona por defecto (general)
-window.addEventListener('load', function(){
-  actualizarQR();
-});
 </script>
 </body>
 </html>
