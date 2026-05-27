@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>QR Easylink — 4 QR por hoja carta</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+
+  body{
+    background:#ccc;
+    font-family:Arial,sans-serif;
+  }
+
+  #controles{
+    background:#1a73e8;
+    color:#fff;
+    padding:12px 20px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+  }
+  #controles h2{font-size:14px;font-weight:700;}
+  .btn-print{
+    background:#fff;
+    color:#1a73e8;
+    border:none;
+    border-radius:8px;
+    padding:8px 18px;
+    font-size:13px;
+    font-weight:700;
+    cursor:pointer;
+  }
+
+  /* ── HOJA CARTA VERTICAL ── */
+  #hoja{
+    width:216mm;
+    height:279mm;
+    margin:10px auto;
+    background:#fff;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    grid-template-rows:1fr 1fr;
+    gap:0;
+    box-shadow:0 4px 20px rgba(0,0,0,.3);
+    overflow:hidden;
+  }
+
+  /* ── CELDA ── */
+  .celda{
+    border:1px solid #e0e0e0;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:flex-start;
+    padding-top:3mm;
+    position:relative;
+  }
+
+  /* ── MARCO EXTERIOR ── */
+  .qr-marco-outer{
+    position:relative;
+    width:82mm;
+    height:82mm;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-shrink:0;
+  }
+
+  /* Esquinas estilo QR */
+  .qr-corner{position:absolute;width:10mm;height:10mm;}
+  .qr-corner::before,.qr-corner::after{content:'';position:absolute;background:#1a73e8;}
+  .qr-corner.tl{top:0;left:0;}
+  .qr-corner.tl::before{top:0;left:0;width:10mm;height:2.5mm;}
+  .qr-corner.tl::after{top:0;left:0;width:2.5mm;height:10mm;}
+  .qr-corner.tr{top:0;right:0;}
+  .qr-corner.tr::before{top:0;right:0;width:10mm;height:2.5mm;}
+  .qr-corner.tr::after{top:0;right:0;width:2.5mm;height:10mm;}
+  .qr-corner.bl{bottom:0;left:0;}
+  .qr-corner.bl::before{bottom:0;left:0;width:10mm;height:2.5mm;}
+  .qr-corner.bl::after{bottom:0;left:0;width:2.5mm;height:10mm;}
+  .qr-corner.br{bottom:0;right:0;}
+  .qr-corner.br::before{bottom:0;right:0;width:10mm;height:2.5mm;}
+  .qr-corner.br::after{bottom:0;right:0;width:2.5mm;height:10mm;}
+
+  /* Textos alrededor */
+  .qr-texto-arriba{
+    position:absolute;top:0;left:0;right:0;
+    display:flex;justify-content:center;align-items:center;gap:2mm;height:8mm;
+  }
+  .qr-texto-abajo{
+    position:absolute;bottom:0;left:0;right:0;
+    display:flex;justify-content:center;align-items:center;gap:2mm;height:8mm;
+  }
+  .qr-texto-izq{
+    position:absolute;left:0;top:0;bottom:0;width:8mm;
+    display:flex;flex-direction:column;justify-content:center;align-items:center;gap:2mm;
+  }
+  .qr-texto-der{
+    position:absolute;right:0;top:0;bottom:0;width:8mm;
+    display:flex;flex-direction:column;justify-content:center;align-items:center;gap:2mm;
+  }
+
+  .txt-cat{
+    font-size:5pt;font-weight:800;color:#1a73e8;
+    text-transform:uppercase;letter-spacing:.03em;
+    background:#e8f0fe;padding:0.6mm 1.5mm;border-radius:3px;white-space:nowrap;
+  }
+  .txt-cat.nar{background:#fff3e0;color:#e65100;}
+  .txt-cat.ver{background:#e8f5e9;color:#2e7d32;}
+  .qr-texto-izq .txt-cat,.qr-texto-der .txt-cat{writing-mode:vertical-rl;text-orientation:mixed;}
+  .qr-texto-izq .txt-cat{transform:rotate(180deg);}
+
+  /* QR central */
+  .qr-center{display:flex;flex-direction:column;align-items:center;}
+  .qr-box{
+    width:58mm;height:58mm;
+    display:flex;align-items:center;justify-content:center;
+    background:#fff;overflow:hidden;
+  }
+  .qr-box canvas,.qr-box img{width:58mm!important;height:58mm!important;}
+
+  /* ── BARRA BLANCA CON TEXTO ── */
+  .qr-barra{
+    width:100%;
+    flex:1;
+    background:#fff;
+    border:none;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:2mm 4mm;
+    margin-top:2mm;
+  }
+  .qr-barra p{
+    font-size:16pt;
+    font-weight:900;
+    color:#1a73e8;
+    line-height:1.35;
+    text-transform:uppercase;
+    letter-spacing:.03em;
+    text-align:center;
+    width:100%;
+  }
+
+  @media print{
+    body{background:#fff;}
+    #controles{display:none!important;}
+    #hoja{margin:0;box-shadow:none;width:216mm;height:279mm;}
+    *{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  }
+</style>
+</head>
+<body>
+
+<div id="controles">
+  <h2>🖨️ QR Easylink — 4 QR por hoja carta</h2>
+  <button class="btn-print" onclick="window.print()">🖨️ Imprimir / PDF</button>
+</div>
+
+<div id="hoja">
+
+  <!-- CELDA 1 -->
+  <div class="celda">
+    <div class="qr-marco-outer">
+      <div class="qr-corner tl"></div><div class="qr-corner tr"></div>
+      <div class="qr-corner bl"></div><div class="qr-corner br"></div>
+      <div class="qr-texto-arriba">
+        <span class="txt-cat">💰 Préstamos</span>
+        <span class="txt-cat nar">🍔 Comida</span>
+      </div>
+      <div class="qr-texto-abajo">
+        <span class="txt-cat ver">🌿 Frutería</span>
+        <span class="txt-cat">🏨 Hoteles</span>
+      </div>
+      <div class="qr-texto-izq">
+        <span class="txt-cat nar">💊 Farmacia</span>
+        <span class="txt-cat">🔧 Ferretería</span>
+      </div>
+      <div class="qr-texto-der">
+        <span class="txt-cat ver">📱 Accesorios</span>
+        <span class="txt-cat nar">🥩 Carnicería</span>
+      </div>
+      <div class="qr-center">
+        <div class="qr-box" id="qr1"></div>
+      </div>
+    </div>
+    <div class="qr-barra">
+      <p>Escanea El QR Directorio<br>Busca Lo Que Necesitas<br>Negocios Cerca De Ti !!!</p>
+    </div>
+  </div>
+
+  <!-- CELDA 2 -->
+  <div class="celda">
+    <div class="qr-marco-outer">
+      <div class="qr-corner tl"></div><div class="qr-corner tr"></div>
+      <div class="qr-corner bl"></div><div class="qr-corner br"></div>
+      <div class="qr-texto-arriba">
+        <span class="txt-cat">💰 Préstamos</span>
+        <span class="txt-cat nar">🍔 Comida</span>
+      </div>
+      <div class="qr-texto-abajo">
+        <span class="txt-cat ver">🌿 Frutería</span>
+        <span class="txt-cat">🏨 Hoteles</span>
+      </div>
+      <div class="qr-texto-izq">
+        <span class="txt-cat nar">💊 Farmacia</span>
+        <span class="txt-cat">🔧 Ferretería</span>
+      </div>
+      <div class="qr-texto-der">
+        <span class="txt-cat ver">📱 Accesorios</span>
+        <span class="txt-cat nar">🥩 Carnicería</span>
+      </div>
+      <div class="qr-center">
+        <div class="qr-box" id="qr2"></div>
+      </div>
+    </div>
+    <div class="qr-barra">
+      <p>Escanea El QR Directorio<br>Busca Lo Que Necesitas<br>Negocios Cerca De Ti !!!</p>
+    </div>
+  </div>
+
+  <!-- CELDA 3 -->
+  <div class="celda">
+    <div class="qr-marco-outer">
+      <div class="qr-corner tl"></div><div class="qr-corner tr"></div>
+      <div class="qr-corner bl"></div><div class="qr-corner br"></div>
+      <div class="qr-texto-arriba">
+        <span class="txt-cat">💰 Préstamos</span>
+        <span class="txt-cat nar">🍔 Comida</span>
+      </div>
+      <div class="qr-texto-abajo">
+        <span class="txt-cat ver">🌿 Frutería</span>
+        <span class="txt-cat">🏨 Hoteles</span>
+      </div>
+      <div class="qr-texto-izq">
+        <span class="txt-cat nar">💊 Farmacia</span>
+        <span class="txt-cat">🔧 Ferretería</span>
+      </div>
+      <div class="qr-texto-der">
+        <span class="txt-cat ver">📱 Accesorios</span>
+        <span class="txt-cat nar">🥩 Carnicería</span>
+      </div>
+      <div class="qr-center">
+        <div class="qr-box" id="qr3"></div>
+      </div>
+    </div>
+    <div class="qr-barra">
+      <p>Escanea El QR Directorio<br>Busca Lo Que Necesitas<br>Negocios Cerca De Ti !!!</p>
+    </div>
+  </div>
+
+  <!-- CELDA 4 -->
+  <div class="celda">
+    <div class="qr-marco-outer">
+      <div class="qr-corner tl"></div><div class="qr-corner tr"></div>
+      <div class="qr-corner bl"></div><div class="qr-corner br"></div>
+      <div class="qr-texto-arriba">
+        <span class="txt-cat">💰 Préstamos</span>
+        <span class="txt-cat nar">🍔 Comida</span>
+      </div>
+      <div class="qr-texto-abajo">
+        <span class="txt-cat ver">🌿 Frutería</span>
+        <span class="txt-cat">🏨 Hoteles</span>
+      </div>
+      <div class="qr-texto-izq">
+        <span class="txt-cat nar">💊 Farmacia</span>
+        <span class="txt-cat">🔧 Ferretería</span>
+      </div>
+      <div class="qr-texto-der">
+        <span class="txt-cat ver">📱 Accesorios</span>
+        <span class="txt-cat nar">🥩 Carnicería</span>
+      </div>
+      <div class="qr-center">
+        <div class="qr-box" id="qr4"></div>
+      </div>
+    </div>
+    <div class="qr-barra">
+      <p>Escanea El QR Directorio<br>Busca Lo Que Necesitas<br>Negocios Cerca De Ti !!!</p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+var URL_BASE = 'https://proyectosolaronline-ops.github.io/Cat-logo-tienda-online/';
+
+function determinarZona(lat, lng) {
+  if (lat >= 19.5 && lat <= 21.6 && lng >= -91.0 && lng <= -87.5) {
+    return 'diryucatan.html';
+  } else if (lat >= 23.1201 && lat <= 25.1201 && lng >= -112.3239 && lng <= -108.3239) {
+    return 'dirbcs.html';
+  } else {
+    return 'index.html';
+  }
+}
+
+function generarQRs(url) {
+  [1, 2, 3, 4].forEach(function(n) {
+    var el = document.getElementById('qr' + n);
+    el.innerHTML = '';
+    new QRCode(el, {
+      text: url,
+      width: 219,
+      height: 219,
+      colorDark: '#0d47a1',
+      colorLight: '#ffffff',
+      correctLevel: QRCode.CorrectLevel.M
+    });
+  });
+  console.log('✅ QR generado para: ' + url);
+}
+
+if (navigator.geolocation) {
+  navigator.geolocation.getCurrentPosition(function(pos) {
+    var lat = pos.coords.latitude;
+    var lng = pos.coords.longitude;
+    var archivo = determinarZona(lat, lng);
+    var urlFinal = URL_BASE + archivo;
+    console.log('📍 GPS: Lat=' + lat + ' Lng=' + lng + ' → ' + archivo);
+    generarQRs(urlFinal);
+  }, function() {
+    console.log('⚠️ GPS falló, usando general');
+    generarQRs(URL_BASE + 'index.html');
+  });
+} else {
+  console.log('⚠️ Sin GPS, usando general');
+  generarQRs(URL_BASE + 'index.html');
+}
+</script>
+</body>
+</html>
