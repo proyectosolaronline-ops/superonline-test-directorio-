@@ -1,4 +1,4 @@
-version I.A v1
+version I.A v2
 <!DOCTYPE html>
 
 <html lang="es">
@@ -1890,7 +1890,6 @@ const clearBtn=document.getElementById('clearBtn');
 function syncSearch(v){searchInput.value=v;searchInput2.value=v;}
 
 searchInput.addEventListener('input',e=>handleSearch(e.target.value));
-
 searchInput2.addEventListener('input',e=>{syncSearch(e.target.value);handleSearch(e.target.value);});
 
 function handleSearch(val){
