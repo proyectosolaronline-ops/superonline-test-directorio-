@@ -1,4 +1,4 @@
-version I.A v2
+version I.A v3
 <!DOCTYPE html>
 
 <html lang="es">
@@ -1899,12 +1899,7 @@ function handleSearch(val){
     stats.searches++;
     document.getElementById('stats-searches').textContent=stats.searches;
         document.getElementById('searchPanel').classList.add('active');
-    
-    // NUEVO: buscar con el asistente conversacional
-    const results = searchLocalStores(val);
-    const smartMsg = getSmartResponse(val, results);
-    renderSearchResultsWithAI(val, results, smartMsg);
-    
+    renderSearchResults(val);
   } else {
     clearSearch();
   }
