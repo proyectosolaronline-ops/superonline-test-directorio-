@@ -1,4 +1,4 @@
-version I.A
+version I.A v1
 <!DOCTYPE html>
 
 <html lang="es">
@@ -1891,7 +1891,7 @@ function syncSearch(v){searchInput.value=v;searchInput2.value=v;}
 
 searchInput.addEventListener('input',e=>handleSearch(e.target.value));
 
-searchInput2.addEventListener('input',e=>{syncSearch(e.target.value);renderSearchResults(e.target.value);});
+searchInput2.addEventListener('input',e=>{syncSearch(e.target.value);handleSearch(e.target.value);});
 
 function handleSearch(val){
   syncSearch(val);
@@ -1916,14 +1916,12 @@ function clearSearch(){syncSearch('');clearBtn.style.display='none';document.get
   
 
 function renderSearchResults(query){
-  // Obtener resultados y mensaje inteligente
   const results = searchLocalStores(query);
   const smartMsg = getSmartResponse(query, results);
   
   const container=document.getElementById('searchResults');
   let html='';
   
-  // Mensaje del asistente
   if(smartMsg){
     html+=`
       <div style="background:linear-gradient(135deg,#1a73e8,#0d47a1);color:#fff;padding:14px 16px;font-size:13px;line-height:1.6;border-bottom:3px solid #ff6900;">
@@ -1968,52 +1966,6 @@ function renderSearchResults(query){
   });
   
   container.innerHTML=html;
-}
-
-  const results=ALL_STORES.filter(matchesQuery);
-
-  const container=document.getElementById('searchResults');
-
-  if(!results.length){container.innerHTML=`<div class="sp-empty"><div style="font-size:36px;margin-bottom:12px;">🔍</div><div>Sin resultados para "<strong>${query}</strong>"</div></div>`;return;}
-
-  container.innerHTML='';
-
-  results.forEach(s=>{
-
-    const cfg=s.config||{};
-
-    const logoUrl=fixImgUrl(cfg.logo||cfg.logoUrl||'');
-
-    const fotoUrl=s.isExternal?fixImgUrl(cfg.foto||cfg.photo||cfg.fotoUrl||cfg.image||logoUrl||''):logoUrl;
-
-    const lat=parseFloat(cfg.locationLat),lng=parseFloat(cfg.locationLng);
-
-    const dist=userLat&&!isNaN(lat)?haversineKm(userLat,userLng,lat,lng).toFixed(1):null;
-
-    const nearby=dist&&parseFloat(dist)<=RADIO_KM;
-
-    const item=document.createElement('div');item.className='sp-item';
-
-    item.innerHTML=`
-
-      <div class="sp-logo">${fotoUrl?`<img src="${fotoUrl}" alt="${s.nombre_tienda||s.name}">`:'🏪'}</div>
-
-      <div class="sp-info">
-
-        <h3>${s.nombre_tienda||s.name||'Tienda'}${s.isExternal?'<span style="font-size:10px;background:#fff3e0;color:#e65100;padding:1px 7px;border-radius:20px;font-weight:700;margin-left:4px;">🏪 Externa</span>':''}</h3>
-
-        ${dist?`<div class="sp-dist">📍 ${dist} km${nearby?'<span class="sp-badge">Cercana</span>':''}</div>`:''}
-
-        <div class="sp-desc">${cfg.description||[cfg.colonia,cfg.localidad||cfg.city].filter(Boolean).join(', ')||'Tienda externa'}</div>
-
-      </div>`;
-
-    item.onclick=()=>{clearSearch();if(!isNaN(lat)&&!isNaN(lng))map.setView([lat,lng],16,{animate:true});setTimeout(()=>openPopup(s.storeId),350);};
-
-    container.appendChild(item);
-
-  });
-
 }
 
 /* ══ FULLSCREEN ══ */
