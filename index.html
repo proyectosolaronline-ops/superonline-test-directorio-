@@ -1894,27 +1894,21 @@ searchInput.addEventListener('input',e=>handleSearch(e.target.value));
 searchInput2.addEventListener('input',e=>{syncSearch(e.target.value);renderSearchResults(e.target.value);});
 
 function handleSearch(val){
-
   syncSearch(val);
-
   clearBtn.style.display=val?'block':'none';
-
   if(val.trim()){
-
     stats.searches++;
-
     document.getElementById('stats-searches').textContent=stats.searches;
-
         document.getElementById('searchPanel').classList.add('active');
-
-    renderSearchResults(val);
-
+    
+    // NUEVO: buscar con el asistente conversacional
+    const results = searchLocalStores(val);
+    const smartMsg = getSmartResponse(val, results);
+    renderSearchResultsWithAI(val, results, smartMsg);
+    
   } else {
-
     clearSearch();
-
   }
-
 }
 
 function clearSearch(){syncSearch('');clearBtn.style.display='none';document.getElementById('searchPanel').classList.remove('active');}
@@ -1922,10 +1916,59 @@ function clearSearch(){syncSearch('');clearBtn.style.display='none';document.get
   
 
 function renderSearchResults(query){
-
-  const q=query.trim().toLowerCase();
-
-  function matchesQuery(s){const cfg=s.config||{};const nombre=(s.nombre_tienda||s.name||'').toLowerCase();const kwString=(cfg.keywords||'').toLowerCase();const ciudad=(cfg.directoryCity||cfg.city||cfg.localidad||'').toLowerCase();if(nombre.includes(q)||ciudad.includes(q))return true;return kwString.split(',').map(k=>k.trim()).filter(Boolean).some(k=>k.includes(q)||q.includes(k));}
+  // Obtener resultados y mensaje inteligente
+  const results = searchLocalStores(query);
+  const smartMsg = getSmartResponse(query, results);
+  
+  const container=document.getElementById('searchResults');
+  let html='';
+  
+  // Mensaje del asistente
+  if(smartMsg){
+    html+=`
+      <div style="background:linear-gradient(135deg,#1a73e8,#0d47a1);color:#fff;padding:14px 16px;font-size:13px;line-height:1.6;border-bottom:3px solid #ff6900;">
+        <div style="display:flex;align-items:flex-start;gap:8px;">
+          <div style="font-size:24px;">🤖</div>
+          <div style="flex:1;">
+            <div style="font-weight:700;font-size:10px;opacity:.85;margin-bottom:4px;">ASISTENTE EASYLINK</div>
+            <div style="white-space:pre-line;">${smartMsg}</div>
+          </div>
+        </div>
+      </div>`;
+  }
+  
+  if(!results||!results.length){
+    if(!smartMsg) html+=`<div class="sp-empty"><div style="font-size:36px;margin-bottom:12px;">🔍</div><div>Sin resultados para "<strong>${query}</strong>"</div></div>`;
+    container.innerHTML=html;
+    return;
+  }
+  
+  html+=`<div style="padding:8px 16px;font-size:10px;font-weight:700;color:#1a73e8;background:#f0f4ff;border-bottom:1px solid #dde8ff;">📋 ${results.length} resultado(s)</div>`;
+  
+  results.slice(0,20).forEach(s=>{
+    const cfg=s.config||{};
+    const logoUrl=fixImgUrl(cfg.logo||cfg.logoUrl||'');
+    const fotoUrl=s.isExternal?fixImgUrl(cfg.foto||cfg.photo||cfg.fotoUrl||cfg.image||logoUrl||''):logoUrl;
+    const lat=parseFloat(cfg.locationLat),lng=parseFloat(cfg.locationLng);
+    const dist=userLat&&!isNaN(lat)?haversineKm(userLat,userLng,lat,lng).toFixed(1):null;
+    const nearby=dist&&parseFloat(dist)<=RADIO_KM;
+    const tipo=cfg.tipoNegocio||cfg.businessType||cfg.tipo||'';
+    
+    html+=`
+      <div class="sp-item" onclick="clearSearch();${!isNaN(lat)&&!isNaN(lng)?`map.setView([${lat},${lng}],16,{animate:true});`:''}setTimeout(()=>openPopup('${s.storeId}'),350);" style="position:relative;">
+        ${nearby?'<div style="position:absolute;top:8px;right:8px;background:#16a34a;color:#fff;font-size:8px;padding:2px 7px;border-radius:10px;font-weight:700;">CERCANA</div>':''}
+        <div class="sp-logo">${fotoUrl?`<img src="${fotoUrl}" alt="${s.nombre_tienda||s.name}">`:'🏪'}</div>
+        <div class="sp-info">
+          <h3>${s.nombre_tienda||s.name||'Tienda'}${s.isExternal?' <span style="font-size:9px;background:#fff3e0;color:#e65100;padding:1px 6px;border-radius:10px;">Externa</span>':''}${tipo?` <span style="font-size:9px;color:#888;">· ${tipo}</span>`:''}</h3>
+          ${dist?`<div class="sp-dist">📍 ${dist} km</div>`:''}
+          ${cfg.description?`<div class="sp-desc">${cfg.description.substring(0,80)}...</div>`:''}
+        </div>
+        <div style="color:#ccc;font-size:20px;">›</div>
+      </div>`;
+  });
+  
+  container.innerHTML=html;
+}
 
   const results=ALL_STORES.filter(matchesQuery);
 
@@ -2424,6 +2467,92 @@ setInterval(function(){
   }
 
 },30000);
+
+// ============================================================
+// ASISTENTE CONVERSACIONAL GRATIS v2
+// ============================================================
+
+let conversationContext = {
+  lastQuery: '',
+  lastCategory: '',
+  searchCount: 0
+};
+
+function searchLocalStores(query) {
+  const q = query.trim().toLowerCase();
+  const synonyms = {
+    'prestamo': ['préstamo', 'prestamos', 'dinero', 'efectivo', 'credito', 'financiera'],
+    'farmacia': ['farmacias', 'medicina', 'medicamento', 'pastilla', 'remedios', 'botica'],
+    'ferreteria': ['ferretería', 'herramienta', 'herramientas', 'tornillo', 'clavos', 'pintura', 'cemento'],
+    'abarrotes': ['abarrote', 'tienda', 'despensa', 'super', 'supermercado', 'viveres'],
+    'restaurante': ['restaurantes', 'comida', 'cenar', 'desayunar', 'tacos', 'pizza', 'mariscos', 'taquería'],
+    'ropa': ['vestido', 'pantalon', 'pantalón', 'playera', 'moda', 'boutique', 'calzado'],
+    'zapatos': ['zapato', 'tenis', 'calzado', 'botas', 'zapatería'],
+    'medico': ['médico', 'doctor', 'consulta', 'consultorio', 'clínica', 'dentista'],
+    'electronica': ['electrónica', 'celular', 'celulares', 'cargador', 'audifonos', 'bocina', 'cable', 'funda'],
+    'mascotas': ['mascota', 'perro', 'gato', 'veterinaria', 'alimento'],
+    'muebles': ['mueble', 'silla', 'mesa', 'cama', 'sofa', 'closet', 'decoración'],
+    'carne': ['carnes', 'pollo', 'cerdo', 'pescado', 'marisco', 'carnicería'],
+    'pastel': ['pasteles', 'pastelería', 'pan', 'repostería', 'dulces', 'postre'],
+    'gimnasio': ['gym', 'ejercicio', 'fitness', 'crossfit', 'pesas'],
+    'salon': ['salón', 'belleza', 'estética', 'spa', 'uñas', 'corte', 'barbería'],
+    'floreria': ['florería', 'flores', 'ramos', 'arreglos'],
+    'mecanico': ['mecánico', 'mecánica', 'taller', 'reparación', 'motor', 'frenos', 'afinación'],
+    'llantera': ['llantas', 'llanta', 'neumáticos', 'vulcanizadora', 'alineación', 'balanceo'],
+    'quiropractico': ['quiropráctico', 'columna', 'espalda', 'fisioterapia', 'rehabilitación', 'masaje'],
+    'hotel': ['hoteles', 'motel', 'hostal', 'hospedaje', 'alojamiento', 'habitación'],
+    'taller motos': ['moto', 'motos', 'motocicleta', 'italika', 'honda', 'yamaha', 'refacciones moto'],
+    'viajes': ['viaje', 'agencia viajes', 'turismo', 'vuelos', 'vacaciones', 'crucero', 'playa']
+  };
+  
+  let searchTerms = [q];
+  for (const [key, syns] of Object.entries(synonyms)) {
+    if (q.includes(key) || syns.some(s => q.includes(s))) {
+      searchTerms = searchTerms.concat(syns);
+      break;
+    }
+  }
+  
+  return ALL_STORES.filter(s => {
+    const cfg = s.config || {};
+    const nombre = (s.nombre_tienda || s.name || '').toLowerCase();
+    const tipo = (cfg.tipoNegocio || cfg.businessType || cfg.tipo || '').toLowerCase();
+    const keywords = (cfg.keywords || '').toLowerCase();
+    const desc = (cfg.description || '').toLowerCase();
+    const ciudad = (cfg.directoryCity || cfg.city || cfg.localidad || '').toLowerCase();
+    const colonia = (cfg.colonia || '').toLowerCase();
+    const searchText = `${nombre} ${tipo} ${keywords} ${desc} ${ciudad} ${colonia}`;
+    return searchTerms.some(term => searchText.includes(term));
+  });
+}
+
+function getSmartResponse(query, results) {
+  const q = query.toLowerCase().trim();
+  const cercanos = results.filter(s => {
+    const cfg = s.config || {};
+    const lat = parseFloat(cfg.locationLat), lng = parseFloat(cfg.locationLng);
+    return !isNaN(lat) && !isNaN(lng) && haversineKm(userLat, userLng, lat, lng) <= RADIO_KM;
+  });
+  const total = ALL_STORES.length;
+
+  if (q.match(/^(hola|hey|buenos días|buenas tardes|buenas noches|saludos)/i)) {
+    return `¡Hola! 👋 Soy el asistente del Directorio Easylink. Tenemos **${total} negocios** y **${nearbyStores.length} cerca de ti**. Busca: 💰 préstamos, 💊 farmacias, 🔧 mecánicos, 🛞 llanteras, 🦴 quiroprácticos, 🏨 hoteles, 🏍️ taller motos, ✈️ viajes, 🛒 abarrotes, 🍕 restaurantes, 👗 ropa, 📱 electrónica. ¿Qué necesitas?`;
+  }
+  if (q.match(/gracias|thank|muy amable/i)) return '¡De nada! 😊 Aquí estoy si necesitas algo más.';
+  if (q.match(/adiós|adios|bye|hasta luego/i)) return '¡Hasta luego! 👋 Vuelve cuando necesites.';
+
+  if (results.length === 0) {
+    return `🤔 No encontré "${query}". Prueba: préstamos, farmacia, mecánico, llantera, quiropráctico, hotel, taller motos, viajes, ferretería, abarrotes, restaurantes, ropa, electrónica.`;
+  }
+
+  if (cercanos.length > 0) {
+    return `✅ ¡**${cercanos.length} resultado(s)** cerca de ti para "${query}"! Revisa abajo. 📍`;
+  }
+  
+  return `📋 **${results.length} resultado(s)** para "${query}" en el directorio. Algunos pueden estar más lejos.`;
+}
+
+ 
 
 // ============================================================
 
