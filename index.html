@@ -1,4 +1,4 @@
-version I.A v3
+version I.A v4
 <!DOCTYPE html>
 
 <html lang="es">
@@ -1889,8 +1889,22 @@ const clearBtn=document.getElementById('clearBtn');
 
 function syncSearch(v){searchInput.value=v;searchInput2.value=v;}
 
-searchInput.addEventListener('input',e=>handleSearch(e.target.value));
-searchInput2.addEventListener('input',e=>{syncSearch(e.target.value);handleSearch(e.target.value);});
+searchInput.addEventListener('input',e=>{
+  syncSearch(e.target.value);
+  if(e.target.value.trim()){
+    stats.searches++;
+    document.getElementById('stats-searches').textContent=stats.searches;
+    document.getElementById('searchPanel').classList.add('active');
+  }
+  renderSearchResults(e.target.value);
+});
+
+searchInput2.addEventListener('input',e=>{
+  syncSearch(e.target.value);
+  if(e.target.value.trim()){
+    renderSearchResults(e.target.value);
+  }
+});
 
 function handleSearch(val){
   syncSearch(val);
@@ -1898,7 +1912,7 @@ function handleSearch(val){
   if(val.trim()){
     stats.searches++;
     document.getElementById('stats-searches').textContent=stats.searches;
-        document.getElementById('searchPanel').classList.add('active');
+    document.getElementById('searchPanel').classList.add('active');
     renderSearchResults(val);
   } else {
     clearSearch();
